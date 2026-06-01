@@ -20,7 +20,7 @@ _callback.local_debug = function(data, file_name, line_number)
     self.toggle_debug()
 end function
 
-_callback.loading_key_frame = function(percent)
+_callback.loading_key_frame = function(percent = 100)
     progress = round(percent * 100)
     progress_bar = "%" * progress 
     anti_bar = ("<s><s>" + (" " * (100 - progress)) + "</s></s>").c("black")

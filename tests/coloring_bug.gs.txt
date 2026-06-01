@@ -3,11 +3,6 @@ string.concat = function(appended_string)
   return self + appended_string
 end function 
 
-string.format_columns = function()
-
-end function 
-string.fmt_cols = @string.format_columns
-
 // coloring strings
 string.color = function(alpha_color = "black", numeric_color = "black", symbol_color = "purple") 
   alpha_toggle = false 
@@ -50,7 +45,7 @@ string.color = function(alpha_color = "black", numeric_color = "black", symbol_c
 
     end if
 
-    if typeof(recognize_char.numeric.indexOf(character)) == "number" and not numeric_toggle then 
+    if typeof(recognize_char.numeric.indexOf(character)) and not numeric_toggle then 
 
       //cleanup 
       if alpha_toggle then 
@@ -70,7 +65,7 @@ string.color = function(alpha_color = "black", numeric_color = "black", symbol_c
 
     end if
 
-    if typeof(recognize_char.symbol.indexOf(character)) == number and not symbol_toggle then 
+    if typeof(recognize_char.symbol.indexOf(character)) and not symbol_toggle then 
 
       //cleanup
       if alpha_toggle then 
@@ -90,8 +85,6 @@ string.color = function(alpha_color = "black", numeric_color = "black", symbol_c
 
     end if
 
-    result_string = result_string.concat(character)
-
   end for
 
   return result_string.concat(recognize_color.end_color)
@@ -108,21 +101,8 @@ string.c_emph_int = function()
 end function 
 
 string.c_all_black = function()
-  return self.color("black", "black", "black")
-end function 
-
-string.center = function()
-
-end function 
-string.ctr = @string.center
-
-//string markup
-
-string.bold = function()
-  return "<b>" + self + "</b>"
-end function 
-string.b = @string.bold
-
+  return self.color("purple", "black", "black")
+end function
 
 // testing 
 
