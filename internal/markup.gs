@@ -1,0 +1,86 @@
+// formatting strings
+string.concat = function(appended_string)
+  return self + appended_string
+end function 
+
+string.format_columns = function()
+
+end function 
+string.fmt_cols = @string.format_columns
+
+// coloring strings
+string.color = function(alpha_color = "black", numeric_color = "black", symbol_color = "purple") 
+  alpha_toggle = false 
+  symbol_toggle = false 
+  numeric_toggle = false 
+  result_string = ""
+
+  recognize_char = {
+    "alpha" : "qwertyuiopadfghjklzxcvbnmQWERTYUIOPASDFHJKLZXCVBNM",
+    "numeric": "1234567890",
+    "symbol": ",./<>?;':[]\{}|-=_+!@#$%^&*()`~" + """"
+  }
+
+  recognize_color = {
+    "black": "<#5B5A5C>",
+    "purple": "<#AB5EFF>",
+    "end_color": "</color>"
+  }
+
+  for character in self 
+    if typeof(recognize_char.alpha.indexOf(character)) == "number" and not alpha_toggle then 
+      
+      //cleanup
+      if numeric_toggle then 
+        result_string = result_string.concat(recognize_color.end_color)
+        numeric_toggle = false 
+      end if
+
+      if symbol_toggle then 
+        result_string = result_string.concat(recognize_color.end_color)
+        symbol_toggle = false 
+      end if
+
+      //add new color
+      alpha_toggle = true 
+      result_string = result_string.concat(recognize_color[alpha_color] + character)
+
+    end if
+
+    if typeof(recognize_char.numeric.indexOf(character)) and not numeric_toggle then 
+
+    end if
+
+    if typeof(recognize_char.symbol.indexOf(character)) and not symbol_toggle then 
+
+    end if
+  end for
+  
+end function
+string.c = @string.color
+
+string.c_reg_txt = function()
+  return self.color()
+end function
+
+string.c_emph_int = function()
+  return self.color("black", "purple", "purple")
+end function 
+
+string.c_all_black = function()
+  return self.color("black", "black", "black")
+end function 
+
+string.center = function()
+
+end function 
+string.ctr = @string.center
+
+//string markup
+
+string.bold = function()
+  return "<b>" + self + "</b>"
+end function 
+string.b = @string.bold
+
+
