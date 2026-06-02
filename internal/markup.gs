@@ -1,12 +1,7 @@
 // formatting strings
 string.concat = function(appended_string)
   return self + appended_string
-end function 
-
-string.format_columns = function()
-
-end function 
-string.fmt_cols = @string.format_columns
+end function
 
 // coloring strings
 string.color = function(alpha_color = "black", numeric_color = "black", symbol_color = "purple") 
@@ -122,19 +117,3 @@ string.bold = function()
   return "<b>" + self + "</b>"
 end function 
 string.b = @string.bold
-
-
-// testing 
-
-test = "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-print "regular colored text: \n" + test.c + "\n"
-
-print "regular colored text: \n" + test.c.values + "\n\n"
-
-print "numeric emphasized text: \n" + (test + " 1234567").c_emph_int + "\n"
-
-print "numeric emphasized text: \n" + (test + " 1234567").c_emph_int.values + "\n\n"
-
-print "all black text: \n" + test.c_all_black + "\n"
-
-print "all black text: \n" + test.c_all_black.values + "\n\n"
