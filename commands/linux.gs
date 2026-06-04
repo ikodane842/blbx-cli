@@ -99,3 +99,67 @@ _COMMAND_.cat = function(PARAMS)
 
     return _callback.catch("", 1)
 end function
+
+_COMMAND_.sweep = function(PARAMS)
+    config = {"amount": 1, "ports": [], "rhost": 0}
+    init = function()
+        // sweep <target amount> OPTION: -port[<port_number>, ...]
+        if not PARAMS.len then 
+            Usage.display("sweep", Usage.get_usage_object("sweep"))
+            return _callback.catch("", 0)
+        end if 
+
+        target_amount = Params.extract_type(PARAMS, [TokenTypes.Float])
+        if not target_amount then target_amount = "1" else target_amount = target_amount[0].value
+
+        target_ports = Params.extract_flags(PARAMS)
+        if target_ports.len then 
+            for flag in target_ports
+                flag = flag + " "
+                if flag.is_match("\[*\]") then 
+                    flag = slice(flag, flag.values.indexOf("["), flag.values.indexOf("]") + 1)
+                    target_ports = Params.extract_flag_content(flag)
+                end if
+            end for
+        end if
+        if not target_ports then target_ports = []
+
+        config.amount = target_amount 
+        config.ports = target_ports
+
+        return _callback.catch("", 1)
+    end function
+    error_handling = init()
+    if not error_handling.status then return error_handling
+    
+    count = 0
+    matching_ip_address_arr = []
+
+    while count < config.amount.to_int
+        config.rhost = Machine.random_ip()
+        target_ports = Exploit.module.grab_ports(config.rhost, config.ports, 1)
+
+        if not target_ports or not target_ports.len then continue 
+
+        found = [] 
+        for port in target_ports 
+            for check_port in config.ports 
+                if check_port.to_int == port.port_number then found.push(port)
+            end for 
+        end for 
+        
+        if not found.len == config.ports.len then continue 
+        
+        matching_ip_address_arr.push(config.rhost)
+
+        //_callback.local_debug(config.rhost, "config.rhost", 10)
+    
+        Session.process.internal_run("nmap", config.rhost, 0)
+        count = count + 1
+    end while 
+
+
+
+    return _callback.catch(matching_ip_address_arr, 1)
+end function
+_COMMAND_.sw = @_COMMAND_.sweep

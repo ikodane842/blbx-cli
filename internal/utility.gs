@@ -218,6 +218,15 @@ Machine.reset_remote = function()
     self.is_remote = false 
 end function 
 
+Machine.random_ip = function()
+    random_octet = function()
+        return floor(rnd * ((255 - 0) + 1) + 0)
+    end function
+
+    return random_octet + "." + random_octet + "." + random_octet + "." + random_octet
+end function
+
+
 Exploit = {}
 Exploit.module = {}
 Exploit.module.components = {}
@@ -253,3 +262,16 @@ Exploit.module.actions.attack = function(lan_address, change_password = false, t
 
 end function
 
+Exploit.module.grab_ports = function(ip_address, must_match = [], all = 0)
+    match_arr = []
+    remote_router = get_router(ip_address)
+    if typeof(remote_router) == "null" then return false 
+    ports_arr = remote_router.used_ports
+    if all then return ports_arr
+
+    for port in ports_arr 
+        if typeof(must_match.indexOf(str(port.port_number))) == "number" then match_arr.push(port)
+    end for 
+
+    return match_arr
+end function
