@@ -34,7 +34,7 @@ end function
 
 Lexer.next_token = function()
     ch = self.consume()
-    if tp(ch) == "null" then return null
+    if typeof(ch) == "null" then return null
 
     if ch.is_match("\s") then return self.next_token() // skip whitespace
 
@@ -82,7 +82,7 @@ Lexer.next_token = function()
         
         while self.get_input().len > 0 and self.get_input()[self.position].is_match("\d|\.")
             next_number = self.consume()
-            if tp(("abcdefghigklmnopqrstuv" + "abcdefghigklmnopqrstuv ".upper).values.indexOf(next_number)) == "number" then break
+            if typeof(("abcdefghigklmnopqrstuv" + "abcdefghigklmnopqrstuv ".upper).values.indexOf(next_number)) == "number" then break
             number = number + next_number
         end while
         
@@ -122,12 +122,12 @@ Lexer.next_token = function()
         end if 
         //print{ "type": TokenTypes.Argument, "value": keyword }
         
-        if not tp("(){}=,|".values.indexOf(keyword)) then return { "type": TokenTypes.Argument, "value": keyword }
+        if not typeof("(){}=,|".values.indexOf(keyword)) then return { "type": TokenTypes.Argument, "value": keyword }
 
     end if 
 
     //Handle punctuation (including comma for argument separation)
-    if tp("(){}=,|".values.indexOf(ch)) == "number" then self.consume()
+    if typeof("(){}=,|".values.indexOf(ch)) == "number" then self.consume()
     if ch == "(" then return { "type": TokenTypes.ParenOpen, "value": ch }
     if ch == ")" then return { "type": TokenTypes.ParenClosed, "value": ch }
     if ch == "{" then return { "type": TokenTypes.BracketOpen, "value": ch }
@@ -152,7 +152,7 @@ end function
 
 Lexer.Tokenize = function() 
     self.token_output.push(self.next_token())
-    if tp(self.token_output[-1]) == "null" then 
+    if typeof(self.token_output[-1]) == "null" then 
         self.token_output = self.token_output[:-1]
         return self.token_output.clean([true])
     end if 
@@ -214,7 +214,7 @@ Parser.ParseCommand = function()
     args = []
     token = self.consume()
 
-    if tp(token) == "null" then return null
+    if typeof(token) == "null" then return null
 
     if token.type == TokenTypes.Command then 
         command_token = { "type": TokenTypes.Command, "value": token.value }
@@ -310,7 +310,7 @@ Interpreter.run_command = function(command_ast, show_error = 1, data = 0)
 
     if not command.hasIndex(command_ast[0].value) then 
         print
-        printb("[blbx][sys]: command not found...".c("black black purple"))
+        printb("[blbx][sys]: command not found...".c)
         print 
         return _callback.catch("", 0) 
     end if 
@@ -318,7 +318,7 @@ Interpreter.run_command = function(command_ast, show_error = 1, data = 0)
     safe_run_result = Session.process.safe_run(command_ast[0].value, command_ast[0].params, data)
     
     if not safe_run_result.status and show_error then
-        print(b + safe_run_result.data.c("black black purple"))
+        print(b + safe_run_result.data.c)
         print 
     end if
 
@@ -340,7 +340,7 @@ Interpreter.determine_execution_type = function()
         end if
 
         
-        if not tp([TokenTypes.Command, TokenTypes.Macro, TokenTypes.Flag].indexOf(current_ast.type)) == "number" then
+        if not typeof([TokenTypes.Command, TokenTypes.Macro, TokenTypes.Flag].indexOf(current_ast.type)) == "number" then
             Usage.display("syntax_assign", Usage.get_usage_object("syntax_assign"))
             return _callback.catch("[blbx][syntax][err]: invalid assignment. must have a keyword, macro, or flag on the left side of assignment.")
         end if   
@@ -350,19 +350,19 @@ Interpreter.determine_execution_type = function()
 
     // if TokenTypes.Flag, TokenTypes.Macro
 
-    if tp([TokenTypes.Command].indexOf(current_ast.type)) == "number" then 
+    if typeof([TokenTypes.Command].indexOf(current_ast.type)) == "number" then 
         //check if command exists 
-        if tp(command.indexes.indexOf(current_ast.value)) == "number" then return { "type": ExecutionTypes.Command, "left": current_ast.value, "right": current_ast.params }
+        if typeof(_COMMAND_.indexes.indexOf(current_ast.value)) == "number" then return { "type": ExecutionTypes.Command, "left": current_ast.value, "right": current_ast.params }
     end if 
 
-    if tp([TokenTypes.Macro].indexOf(current_ast.type)) == "number" then
+    if typeof([TokenTypes.Macro].indexOf(current_ast.type)) == "number" then
         if not Session.env.macro.has(current_ast.value) then return { "Type": ExecutionTypes.Macro, "left": current_ast, "right": "undefined" }
         return { "type": ExecutionTypes.Macro, "left": current_ast, "right": self.ast_arr[1:] }
     end if
 
-    if self.ast_arr.len == 1 and tp([TokenTypes.String, TokenTypes.Float].indexOf(current_ast.type)) == "number" then return { "type": ExecutionTypes.Lookup, "value": current_ast.value }
+    if self.ast_arr.len == 1 and typeof([TokenTypes.String, TokenTypes.Float].indexOf(current_ast.type)) == "number" then return { "type": ExecutionTypes.Lookup, "value": current_ast.value }
     
-    if self.ast_arr.len == 1 and tp([TokenTypes.Flag].indexOf(current_ast.type)) == "number" then
+    if self.ast_arr.len == 1 and typeof([TokenTypes.Flag].indexOf(current_ast.type)) == "number" then
         variable_instance = Session.env.var.get(current_ast.values)
         if Session.env.var.has(current_ast.value) then return { "type": ExecutionTypes.Lookup, "value": "undefined" }
         return { "type": ExecutionTypes.Lookup, "value": variable_instance }
@@ -380,7 +380,6 @@ Interpreter.Execute = function()
     next_input = self.consume_input()
     if not next_input then return self.chain_output
     next_input = next_input.trim
-    printb(Prompt.get_message() + next_input.c("purple"))
     _callback.toggle_debug()
     command_ast = Parser.ParseCLI(next_input)
     self.set_ast_arr(command_ast)
@@ -389,7 +388,7 @@ Interpreter.Execute = function()
     if not interpreter_ast then return self.Execute()
     if interpreter_ast.hasIndex("status") and not interpreter_ast.status then 
         print 
-        printb(interpreter_ast.data.c("black black purple")) // print out syntactical error message
+        printb(interpreter_ast.data.c) // print out syntactical error message
         print 
         Parser.reset() 
         return self.chain_output
@@ -407,12 +406,12 @@ Interpreter.Execute = function()
 
     if interpreter_ast.type == ExecutionTypes.Command then 
         //_callback.local_debug("<color=blue>" + interpreter_ast, "interpreter_ast", 174)
-        safe_run_result = Session.process.safe_run(interpreter_ast.left, interpreter_ast.right)
+        safe_run_result = _PROGRAM_.process.safe_run(interpreter_ast.left, interpreter_ast.right)
         if safe_run_result.status then self.chain_output.push(safe_run_result)
         
         if ((safe_run_result.hasIndex("status") and not safe_run_result.status)) and safe_run_result.data.len then 
             print 
-            printb(safe_run_result.data.c("black black purple"))
+            print (safe_run_result.data.c.b)
             print 
         end if 
     end if 

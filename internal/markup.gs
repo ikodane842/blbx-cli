@@ -13,13 +13,13 @@ string.color = function(alpha_color = "black", numeric_color = "black", symbol_c
   recognize_char = {
     "alpha" : "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFHJKLZXCVBNM",
     "numeric": "1234567890",
-    "symbol": ",\./<>?;':[]\\{}|-=_+!@#$%^&*()`~",
+    "symbol": ",\./<>?;':[]\\{}|-=_+!@#$%^&*()`~•",
   }
   recognize_char.numeric = recognize_char.numeric.concat("""")
   
   recognize_color = {
-    "black": "<#5B5A5C>",
-    "purple": "<#AB5EFF>",
+    "black": "<color=#5B5A5C>",
+    "purple": "<color=#AB5EFF>",
     "end_color": "</color>",
   }
   
@@ -106,6 +106,10 @@ string.c_all_black = function()
   return self.color("black", "black", "black")
 end function 
 
+string.c_all_purple = function()
+  return self.color("purple", "purple", "purple")
+end function
+
 string.center = function()
 
 end function 
@@ -117,3 +121,12 @@ string.bold = function()
   return "<b>" + self + "</b>"
 end function 
 string.b = @string.bold
+
+
+// design elements
+
+wisp="•".c_all_purple + " ".c_all_black +"•".c_all_purple
+reveal=function(str, onCondition=0, elseShow="");if onCondition then return str;return elseShow;end function
+box=function(str)
+  return ("(".c_all_black + "<u>" + str.c_all_purple + ")".c_all_black).bold
+end function

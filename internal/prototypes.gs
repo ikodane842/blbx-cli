@@ -7,6 +7,10 @@ string.clean = function(find = "")
     return result_string
 end function 
 
+string.search = function(sub_string = "")
+  return typeof(self.lower.indexOf(sub_string.lower)) == "number";
+end function
+
 // array prototypes
 list.format_columns = function()
     columns = {};
@@ -51,3 +55,14 @@ list.format_columns = function()
     return formatted.join(char(10))
 end function
 list.fmt_cols = @list.format_columns
+
+list.clean = function(example_list)
+  result_list=[]
+  if not typeof(example_list) == "list" then example_list = [example_list]
+  for i in self
+    if typeof(example_list.indexOf(i)) == "number" then continue
+    result_list.push(i)
+  end for
+  self=result_list
+  return self
+end function
