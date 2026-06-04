@@ -10,9 +10,9 @@ _COMMAND_.ls = function(PARAMS)
 
     for file in (folders + files)
         if file.is_folder then
-            row = file.permissions.c_all_black + " " + file.group.c_all_black + " " + file.owner.c_all_black + " " + file.size.c_all_black + " " + file.name.c_all_purple        
+            row = file.permissions.c_all_purple + " " + file.group.c_all_purple + " " + file.owner.c_all_purple + " " + file.size.c_all_purple + " " + file.name.c_all_purple        
         else 
-            row = file.permissions.c_all_black + " " + file.group.c_all_black + " " + file.owner.c_all_black + " " + file.size.c_all_black + " " + file.name.c_all_black
+            row = file.permissions.c_all_purple + " " + file.group.c_all_purple + " " + file.owner.c_all_purple + " " + file.size.c_all_purple + " " + file.name.c_all_black
         end if
         to_format.push(row)
     end for
@@ -24,14 +24,18 @@ end function
 
 _COMMAND_.cd = function(PARAMS)
     cmd_requirements = function() 
-        if not PARAMS.len then return false
+        if not PARAMS.len then 
+            print // design line
+            return false
+        end if 
         return true
     end function
     if not cmd_requirements then return _callback.catch("", 0)
 
     move_to_path = PARAMS[0].value 
     is_relative_path = false
-    if move_to_path.split("/").len > 1 then file = Directory.find_file(_PROGRAM_.env.root, move_to_path) else file = Directory.find_file(_PROGRAM_.env.root, 0, move_to_path)
+    if not _PROGRAM_.env.root then return _callback.catch("missing remote machine object [file]...", 0)
+    if move_to_path.split("/").len > 1 then file = Directory.find_file(_PROGRAM_.env.root, move_to_path) else file = Directory.find_file(_PROGRAM_.env.comp.File(Prompt.get_current_path), 0, move_to_path)
     if not move_to_path.split("/").len > 1 and move_to_path != ".." then is_relative_path = true
     if move_to_path == ".." then file = Directory.find_file(_PROGRAM_.env.root, Prompt.get_current_path).parent
 
@@ -54,6 +58,7 @@ _COMMAND_.cd = function(PARAMS)
     
 
     Prompt.set_current_path(file.path)
+    print // design line
 
     return _callback.catch("", 1)
 end function 
@@ -67,8 +72,9 @@ _COMMAND_.cat = function(PARAMS)
 
     read_file = PARAMS[0].value 
     is_relative_path = false
+    if not _PROGRAM_.env.root then return _callback.catch("missing remote machine object [file]...", 0)
     if read_file.split("/").len > 1 then file = Directory.find_file(_PROGRAM_.env.root, read_file)
-    if not read_file.split("/").len > 1 then file = Directory.find_file(_PROGRAM_.env.root, 0, read_file)
+    if not read_file.split("/").len > 1 then file = Directory.find_file(_PROGRAM_.env.comp.File(Prompt.get_current_path), 0, read_file)
 
     // analyzing data to find child files for relative path checks
     if is_relative_path then 

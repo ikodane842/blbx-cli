@@ -16,10 +16,33 @@ _PROGRAM_.process.safe_run = function(cmd_name, parameters, data = 0)
     return command_proxy(parameters)
 end function
 
+import_code("/root/purple/prompt");
+import_code("/root/purple/utility");
+
 _PROGRAM_.env = {}
-_PROGRAM_.env.shell = get_shell 
-_PROGRAM_.env.comp = get_shell.host_computer 
-_PROGRAM_.env.root = get_shell.host_computer.File("/")
+_PROGRAM_.env.shell = function()
+    if Machine.is_remote then 
+        shell = Machine.get_shell(Prompt.get_username)
+        if not shell then return false
+    end if
+    return get_shell
+end function 
+
+_PROGRAM_.env.comp = function()
+    if Machine.is_remote then 
+        comp = Machine.get_comp(Prompt.get_username)
+        if not comp then return false
+    end if
+    return get_shell.host_computer
+end function
+
+_PROGRAM_.env.root = function()
+    if Machine.is_remote then 
+        root = Machine.get_file(Prompt.get_username)
+        if not root then return false
+    end if
+    return get_shell.host_computer.File("/")
+end function
 
 _first_iteration_ = true
 if not get_shell.host_computer.File(_ENV_.root_dir) then get_shell.host_computer.create_folder("/root", "purple")
@@ -27,9 +50,7 @@ if not get_shell.host_computer.File(_ENV_.root_dir) then get_shell.host_computer
 // dependencies
 import_code("/root/purple/callback");
 import_code("/root/purple/prototypes");
-import_code("/root/purple/prompt");
 import_code("/root/purple/markup");
-import_code("/root/purple/utility");
 import_code("/root/purple/linux");
 import_code("/root/purple/syntax");
 

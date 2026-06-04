@@ -23,7 +23,8 @@ list.format_columns = function()
         if typeof(start_idx) == "null" or typeof(end_idx) == "null" then return string 
         to_remove = string[start_idx:end_idx + 1]
         
-        return string.clean(to_remove)
+        string = string.clean(to_remove)
+        return rm_colors(string)
     end function
 
     for row in self 
@@ -47,8 +48,7 @@ list.format_columns = function()
 
         for row_elem in col 
             row_idx = row_idx + 1
-            if not formatted.hasIndex(row_idx) then formatted.push("") 
-            // test: print "$" * (((longest_element_per_col[col_idx] + indent) - rm_colors(row_elem).len) + indent)
+            if not formatted.hasIndex(row_idx) then formatted.push("")
             formatted[row_idx] = formatted[row_idx] + row_elem + (" " * (((longest_element_per_col[col_idx] + indent) - rm_colors(row_elem).len)))
         end for
     end for
