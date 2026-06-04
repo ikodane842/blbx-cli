@@ -1,3 +1,52 @@
+Params = {}
+Params.extract_type = function(PARAMS, token_type_arr)
+    instances = []
+    for param_token in PARAMS
+        for token_type in token_type_arr
+            if param_token.type == token_type then 
+                instances.push(param_token)
+                continue 
+            end if
+        end for 
+    end for 
+    
+    return instances
+end function
+
+Params.extract_flags = function(PARAMS) 
+    result_flags = []
+    for token in PARAMS 
+        if token.type != TokenTypes.Flag then continue 
+        result_flags.push(token)
+    end for
+
+    return result_flags
+end function 
+
+Params.extract_flag_content = function(flag)
+    return flag.split("\[|\]|\,|\s").clean([""])
+end function
+
+Params.translate_input_brackets = function(input_string)
+    toggle_bracket = false 
+    result = ""
+    for ch in input_string 
+        if ch == "#" and not toggle_bracket then 
+            result = result + "["
+            toggle_bracket = true
+            continue 
+        end if
+        if ch == "#" and toggle_bracket then 
+            result = result + "]"
+            toggle_bracket = false
+            continue 
+        end if 
+        result = result + ch 
+    end for 
+
+    return result 
+end function
+
 Directory = {}
 
 Directory.find_file_memory = [];
@@ -174,8 +223,11 @@ Exploit.module = {}
 Exploit.module.components = {}
 Exploit.module.actions = {}
 Exploit.module.components.net_session = false 
-Exploit.module.components.metaxploit = false
-
+Exploit.module.components.metaxploit = function()
+    metaxploit_file = Directory.find_file(get_shell.host_computer.File("/"), 0, "metaxploit.so")
+    if not metaxploit_file then return false 
+    return include_lib(metaxploit_file)
+end function
 
 Exploit.module.components.get_net_session = function()
     return self.net_session
@@ -194,7 +246,7 @@ Exploit.module.components.set_metaxploit = function(metaxploit)
 end function 
 
 Exploit.module.get_payloads = function(memory_address)
-    
+
 end function
 
 Exploit.module.actions.attack = function(lan_address, change_password = false, third_arg)
