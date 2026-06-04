@@ -194,7 +194,7 @@ Exploit.module.components.set_metaxploit = function(metaxploit)
 end function 
 
 Exploit.module.get_payloads = function(memory_address)
-
+    
 end function
 
 Exploit.module.actions.attack = function(lan_address, change_password = false, third_arg)
