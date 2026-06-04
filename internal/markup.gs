@@ -1,14 +1,18 @@
+
+reveal=function(str, onCondition=0, elseShow="");if onCondition then return str;return elseShow;end function
+
 // formatting strings
 string.concat = function(appended_string)
   return self + appended_string
 end function
 
 // coloring strings
-string.color = function(alpha_color = "black", numeric_color = "black", symbol_color = "purple") 
+string.color = function(alpha_color = "purple", numeric_color = "purple", symbol_color = "cyan") 
   alpha_toggle = false 
   symbol_toggle = false 
   numeric_toggle = false 
   result_string = ""
+  current_color = false
 
   recognize_char = {
     "alpha" : "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFHJKLZXCVBNM",
@@ -18,15 +22,25 @@ string.color = function(alpha_color = "black", numeric_color = "black", symbol_c
   recognize_char.numeric = recognize_char.numeric.concat("""")
   
   recognize_color = {
-    "black": "<color=#5B5A5C>",
+    "cyan": "<color=#00F0DDFF>",
     "purple": "<color=#AB5EFF>",
     "end_color": "</color>",
   }
   
   for character in self
+
+    if character == char(10) then 
+      result_string = result_string.concat(character)
+      alpha_toggle = false 
+      symbol_toggle = false 
+      numeric_toggle = false 
+      continue
+    end if
     
     if typeof(recognize_char.alpha.indexOf(character)) == "number" and not alpha_toggle then 
       
+      current_color = recognize_color[alpha_color]
+
       //cleanup
       if numeric_toggle then 
         result_string = result_string.concat(recognize_color.end_color)
@@ -46,6 +60,8 @@ string.color = function(alpha_color = "black", numeric_color = "black", symbol_c
     end if
 
     if typeof(recognize_char.numeric.indexOf(character)) == "number" and not numeric_toggle then 
+      
+      current_color = recognize_color[numeric_color]
 
       //cleanup 
       if alpha_toggle then 
@@ -65,8 +81,10 @@ string.color = function(alpha_color = "black", numeric_color = "black", symbol_c
 
     end if
 
-    if typeof(recognize_char.symbol.indexOf(character)) == number and not symbol_toggle then 
+    if typeof(recognize_char.symbol.indexOf(character)) == "number" and not symbol_toggle then 
 
+      current_color = recognize_color[symbol_color]
+      
       //cleanup
       if alpha_toggle then 
         result_string = result_string.concat(recognize_color.end_color)
@@ -99,11 +117,11 @@ string.c_reg_txt = function()
 end function
 
 string.c_emph_int = function()
-  return self.color("black", "purple", "purple")
+  return self.color("purple", "cyan", "cyan")
 end function 
 
 string.c_all_black = function()
-  return self.color("black", "black", "black")
+  return self.color("cyan", "cyan", "cyan")
 end function 
 
 string.c_all_purple = function()
@@ -111,7 +129,7 @@ string.c_all_purple = function()
 end function
 
 string.center = function()
-
+  return "<align=center>" + self + "</align>"
 end function 
 string.ctr = @string.center
 
@@ -125,8 +143,7 @@ string.b = @string.bold
 
 // design elements
 
-wisp="•".c_all_purple + " ".c_all_black +"•".c_all_purple
-reveal=function(str, onCondition=0, elseShow="");if onCondition then return str;return elseShow;end function
+wisp="•".c_all_black + " " +"•".c_all_black
 box=function(str)
-  return ("(".c_all_black + "<u>" + str.c_all_purple + ")".c_all_black).bold
+  return ("(".c_all_black + "<color=#00F0DDFF><u>" + str.c_all_purple + "</u><color=#00F0DDFF>" + ")".c_all_black).bold
 end function

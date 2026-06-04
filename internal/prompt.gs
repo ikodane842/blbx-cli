@@ -41,7 +41,7 @@ Prompt.set_ip_address = function(new_ip_address)
 end function 
 
 Prompt.message = function()
-    return box(self.get_current_path()) + wisp + box(Prompt.get_username()) + wisp + box(self.get_ip_address()) + wisp + box(self.get_lan_address()) + char(10) + wisp + box("#") + "</u>" + ":> "
+    return box(self.get_current_path()) + wisp + box(Prompt.get_username()) + wisp + box(self.get_ip_address()) + wisp + box(self.get_lan_address()) + char(10) + wisp + box("#") + "</u>" + ":> ".c
 end function
 
 Prompt.get_message = function()

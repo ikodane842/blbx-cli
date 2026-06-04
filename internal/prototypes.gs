@@ -14,7 +14,7 @@ end function
 // array prototypes
 list.format_columns = function()
     columns = {};
-    longest_elem_per_col = {};
+    longest_element_per_col = {};
     
     rm_colors = function(string)
         start_idx = string.indexOf("<") 
@@ -28,13 +28,13 @@ list.format_columns = function()
 
     for row in self 
         column_elements = row.split(" ")
-        col_elem_count = 0
-        for elem in column_elements
-            if not columns.hasIndex(col_elem_count) then columns[col_elem_count] = []
-            if not longest_elem_per_col.hasIndex(col_elem_count) then longest_elem_per_col[col_elem_count] = 0
-            columns[col_elem_count].push(elem)
-            if longest_elem_per_col[col_elem_count] < elem.len then longest_elem_per_col[col_elem_count] = rm_colors(elem).len
-            col_elem_count = col_elem_count + 1
+        col_element_count = 0
+        for element in column_elements
+            if not columns.hasIndex(col_element_count) then columns[col_element_count] = []
+            if not longest_element_per_col.hasIndex(col_element_count) then longest_element_per_col[col_element_count] = 0
+            columns[col_element_count].push(element)
+            if longest_element_per_col[col_element_count] < element.len then longest_element_per_col[col_element_count] = rm_colors(element).len
+            col_element_count = col_element_count + 1
         end for
     end for
 
@@ -48,7 +48,8 @@ list.format_columns = function()
         for row_elem in col 
             row_idx = row_idx + 1
             if not formatted.hasIndex(row_idx) then formatted.push("") 
-            formatted[row_idx] = formatted[row_idx] + " " * ((((longest_elem_per_col[col_idx] - rm_colors(row_elem).len) + indent))) + row_elem
+            // test: print "$" * (((longest_element_per_col[col_idx] + indent) - rm_colors(row_elem).len) + indent)
+            formatted[row_idx] = formatted[row_idx] + row_elem + (" " * (((longest_element_per_col[col_idx] + indent) - rm_colors(row_elem).len)))
         end for
     end for
      
