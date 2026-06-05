@@ -17,7 +17,6 @@ _PROGRAM_.process.safe_run = function(cmd_name, parameters, data = 0)
 end function
 
 _PROGRAM_.process.internal_run = function(cmd_name, parameters_str = 0, data = 0)
-    print "running: " + cmd_name + "\n" + parameters_str
     Interpreter.set_input((cmd_name + " " + parameters_str).split(":").clean(""))
     command_result = Interpreter.Execute()
     Interpreter.wipe(1, 1)

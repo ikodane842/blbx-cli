@@ -6,18 +6,20 @@ _COMMAND_.ls = function(PARAMS)
     current_directory = _PROGRAM_.env.comp.File(Prompt.get_current_path())
     folders = current_directory.get_folders
     files = current_directory.get_files
-    to_format = [("permissions".c + " " + "group".c + " " + "owner".c + " " + "size".c + " " + "name".c)]
+    to_format = [("PERMS".c.b + " " + "GROUP".c.b + " " + "OWNER".c.b + " " + "SIZE".c.b + " " + "NAME".c.b)]
 
     for file in (folders + files)
         if file.is_folder then
-            row = file.permissions.c_all_purple + " " + file.group.c_all_purple + " " + file.owner.c_all_purple + " " + file.size.c_all_purple + " " + file.name.c_all_purple        
+            row = file.permissions.c_all_purple.b + " " + file.group.c_all_purple.b + " " + file.owner.c_all_purple.b + " " + file.size.c_all_purple.b + " " + file.name.c_all_purple.b        
         else 
-            row = file.permissions.c_all_purple + " " + file.group.c_all_purple + " " + file.owner.c_all_purple + " " + file.size.c_all_purple + " " + file.name.c_all_black
+            row = file.permissions.c_all_purple.b + " " + file.group.c_all_purple.b + " " + file.owner.c_all_purple.b + " " + file.size.c_all_purple.b + " " + file.name.c_all_cyan.b
         end if
         to_format.push(row)
     end for
 
+    print // design
     print to_format.fmt_cols
+    print // design 
 
     return _callback.catch("", 1)
 end function 
@@ -180,11 +182,11 @@ _COMMAND_.nmap = function(PARAMS)
     print ("Scanning remote target " + PARAMS[0].value + " for available ports...").c.b
     if not router then return _callback.catch("interrupted, no available ports...", 0)
 
-    info = ["PORT STATE SERVICE VERSION LAN".c_all_black]
+    info = ["PORT STATE SERVICE VERSION LAN".c_all_cyan]
     for port in router.used_ports 
         service_info = router.port_info(port)
         lan_address = port.get_lan_ip 
-        if port.is_closed then state = "closed".c_all_purple else state = "open".c_all_black
+        if port.is_closed then state = "closed".c_all_purple else state = "open".c_all_cyan
         info.push(str(port.port_number).c_all_purple + " " + state + " " + service_info.c_all_purple + " " + lan_address.c_all_purple)
     end for
 

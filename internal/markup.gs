@@ -15,7 +15,7 @@ string.color = function(alpha_color = "purple", numeric_color = "purple", symbol
   current_color = false
 
   recognize_char = {
-    "alpha" : "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFHJKLZXCVBNM",
+    "alpha" : "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM",
     "numeric": "1234567890",
     "symbol": ",\./<>?;':[]\\{}|-=_+!@#$%^&*()`~•",
   }
@@ -120,7 +120,7 @@ string.c_emph_int = function()
   return self.color("purple", "cyan", "cyan")
 end function 
 
-string.c_all_black = function()
+string.c_all_cyan = function()
   return self.color("cyan", "cyan", "cyan")
 end function 
 
@@ -143,7 +143,9 @@ string.b = @string.bold
 
 // design elements
 
-wisp="•".c_all_black + " " +"•".c_all_black
+wisp="•".c_all_cyan + " " +"•".c_all_cyan
 box=function(str)
-  return ("(".c_all_black + "<color=#00F0DDFF><u>" + str.c_all_purple + "</u><color=#00F0DDFF>" + ")".c_all_black).bold
+  return ("(".c_all_cyan + "<color=#00F0DDFF><u>" + str.c_all_purple + "</u><color=#00F0DDFF>" + ")".c_all_cyan).bold
 end function
+
+// markup

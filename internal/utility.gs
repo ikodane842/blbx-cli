@@ -302,12 +302,17 @@ Exploit.module.actions.attack = function(lan_address, change_password = false, t
         for line in payload_info.split(char(10))
             if line.split("<b>.").len == 1 then continue 
             payload = line.split("<b>.")[-1].split("</b>")[0]
-            if change_password then 
+            // print payload
+            // print address
+            // print change_password
+            // print third_arg
+            // print 
+            if change_password then
                 object = metalib.overflow(address, payload, change_password)
                 objects.push(object)
                 continue 
             end if
-            if third_arg then 
+            if third_arg then
                 object = metalib.overflow(address, payload, third_arg)
                 objects.push(object)
                 continue
@@ -318,13 +323,26 @@ Exploit.module.actions.attack = function(lan_address, change_password = false, t
         end for
     end for
 
+    shell_count = 0
+    comp_count = 0
+    file_count = 0
+
     for object in objects 
-        if typeof(object) == "shell" then Machine.add_shell(object)
-        if typeof(object) == "computer" then Machine.add_comp(object)
-        if typeof(object) == "file" then Machine.add_file(object)        
+        if typeof(object) == "shell" then 
+            Machine.add_shell(object)
+            shell_count = shell_count + 1
+        end if
+        if typeof(object) == "computer" then 
+            Machine.add_comp(object)
+            comp_count = comp_count + 1
+        end if
+        if typeof(object) == "file" then 
+            Machine.add_file(object)
+            file_count = file_count + 1
+        end if
     end for
 
-    print Machine
+    print "\n" + "object collection".c.b.ctr + "\n" + ("shell: ".c.b + str(shell_count).c_all_cyan.b).ctr + "\n" + ("computer: ".c.b + str(comp_count).c_all_cyan.b).ctr + "\n" + ("file: ".c.b + str(file_count).c_all_cyan.b).ctr + "\n"    
 end function
 
 Exploit.module.grab_ports = function(ip_address, must_match = [], all = 0)
