@@ -290,11 +290,41 @@ end function
 //     return _callback.catch("", 1)
 // end function
 
-Exploit.module.actions.attack = function(lan_address, change_password = false, third_arg)
+Exploit.module.actions.attack = function(lan_address, change_password = false, third_arg = false)
     metalib = Exploit.module.components.get_net_session.dump_lib
     metaxploit = Exploit.module.components.get_metaxploit
-    scanned_info = metaxploit.scan(metalib)
-    print scanned_info
+    memory_addresses = metaxploit.scan(metalib)
+    objects = []
+    
+    //scan memory addresses and parse
+    for address in memory_addresses 
+        payload_info = metaxploit.scan_address(metalib, address)
+        for line in payload_info.split(char(10))
+            if line.split("<b>.").len == 1 then continue 
+            payload = line.split("<b>.")[-1].split("</b>")[0]
+            if change_password then 
+                object = metalib.overflow(address, payload, change_password)
+                objects.push(object)
+                continue 
+            end if
+            if third_arg then 
+                object = metalib.overflow(address, payload, third_arg)
+                objects.push(object)
+                continue
+            end if
+            
+            object = metalib.overflow(address, payload)
+            objects.push(object)
+        end for
+    end for
+
+    for object in objects 
+        if typeof(object) == "shell" then Machine.add_shell(object)
+        if typeof(object) == "computer" then Machine.add_comp(object)
+        if typeof(object) == "file" then Machine.add_file(object)        
+    end for
+
+    print Machine
 end function
 
 Exploit.module.grab_ports = function(ip_address, must_match = [], all = 0)
@@ -310,3 +340,5 @@ Exploit.module.grab_ports = function(ip_address, must_match = [], all = 0)
 
     return match_arr
 end function
+
+// utility

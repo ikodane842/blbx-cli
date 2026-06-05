@@ -49,7 +49,7 @@ list.format_columns = function()
         for row_elem in col 
             row_idx = row_idx + 1
             if not formatted.hasIndex(row_idx) then formatted.push("")
-            formatted[row_idx] = formatted[row_idx] + row_elem + (" " * (((longest_element_per_col[col_idx] + indent) - rm_colors(row_elem).len)))
+            formatted[row_idx] = formatted[row_idx] + row_elem + (" " * (((longest_element_per_col[col_idx] + indent) - rm_colors(row_elem).len) + indent))
         end for
     end for
      

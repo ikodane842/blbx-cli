@@ -180,7 +180,7 @@ _COMMAND_.nmap = function(PARAMS)
     print ("Scanning remote target " + PARAMS[0].value + " for available ports...").c.b
     if not router then return _callback.catch("interrupted, no available ports...", 0)
 
-    info = ["PORT STATE SERVICE LAN".c_all_black]
+    info = ["PORT STATE SERVICE VERSION LAN".c_all_black]
     for port in router.used_ports 
         service_info = router.port_info(port)
         lan_address = port.get_lan_ip 
