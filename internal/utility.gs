@@ -144,8 +144,8 @@ Machine.objects.comp = []
 Machine.objects.file = []
 
 Machine.add_file = function(object)
-    while object.parent != "/"; object = object.parent; end while
-    if typeof(object) == "file" then self.objects.fiie.push(object)
+    while object.parent; object = object.parent; end while
+    if typeof(object) == "file" then self.objects.file.push(object)
 end function
 
 Machine.add_comp = function(object)
@@ -290,8 +290,8 @@ end function
 //     return _callback.catch("", 1)
 // end function
 
-Exploit.module.actions.attack = function(lan_address, change_password = false, third_arg = false)
-    metalib = Exploit.module.components.get_net_session.dump_lib
+Exploit.module.actions.attack = function(lan_address, change_password = false, third_arg = false, net_session)
+    metalib = net_session.dump_lib
     metaxploit = Exploit.module.components.get_metaxploit
     memory_addresses = metaxploit.scan(metalib)
     objects = []
@@ -300,24 +300,21 @@ Exploit.module.actions.attack = function(lan_address, change_password = false, t
     for address in memory_addresses 
         payload_info = metaxploit.scan_address(metalib, address)
         for line in payload_info.split(char(10))
-            if line.split("<b>.").len == 1 then continue 
-            payload = line.split("<b>.")[-1].split("</b>")[0]
-            // print payload
-            // print address
-            // print change_password
-            // print third_arg
-            // print 
+            if line.split("<b>").len == 1 then continue
             if change_password then
+                print "checkpoint 1"
                 object = metalib.overflow(address, payload, change_password)
                 objects.push(object)
                 continue 
             end if
             if third_arg then
+                print "checkpoint 2"
                 object = metalib.overflow(address, payload, third_arg)
                 objects.push(object)
                 continue
             end if
             
+            //print "payload: " + payload.values
             object = metalib.overflow(address, payload)
             objects.push(object)
         end for
