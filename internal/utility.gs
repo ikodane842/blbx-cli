@@ -235,7 +235,7 @@ Exploit.module.components.net_session = false
 Exploit.module.components.metaxploit = function()
     metaxploit_file = Directory.find_file(get_shell.host_computer.File("/"), 0, "metaxploit.so")
     if not metaxploit_file then return false 
-    return include_lib(metaxploit_file)
+    return include_lib(metaxploit_file.path)
 end function
 
 Exploit.module.components.get_net_session = function()
@@ -254,12 +254,47 @@ Exploit.module.components.set_metaxploit = function(metaxploit)
     self.metaxploit = metaxploit
 end function 
 
-Exploit.module.get_payloads = function(memory_address)
+Exploit.module.actions.scan_mode = false 
+
+Exploit.module.actions.set_scan_mode = function(state = true)
+    self.scan_mode = state 
+end function
+
+Exploit.module.actions.get_scan_mode = function()
+    return self.scan_mode
+end function
+
+Exploit.module.actions.get_payloads = function(memory_address)
 
 end function
 
-Exploit.module.actions.attack = function(lan_address, change_password = false, third_arg)
 
+// Exploit.attack = function(lan_address, change_password = 0, third_arg)
+//     memory_arr = []
+//     //we will store mems and payloads by object type 
+//     //this allows recon command and Exploit.scout to 
+//     //avoid shell objects because it will only scan
+//     library = self.get_net_session().dump_lib
+//     if tp(Session.machine.ip.get_lan_address_arr().indexOf(Session.machine.ip.get_lan_address())) != "number" then Session.machine.ip.add_lan_address(lan_address)
+//     if tp(self.module.library.get_metax().rshell_server) != "list" then rshell_arr = [] else rshell_arr = Exploit.module.library.get_metax().rshell_server 
+
+//     exploit_map = self.module.parse_exploits(library)
+//     saved_database = Session.db.parse("exploits")
+//     memory_address_arr = exploit_map.data.indexes
+
+//     for address in memory_address_arr 
+//         self.module.run_exploits(exploit_map.data[address], saved_database, address, lan_address, library, third_arg) //change_password json
+//     end for 
+//     printb(a + ("*** attack on '" + hide_ip(Session.machine.ip.get_pub_address_arr()[-1]) + "@" + hide_ip(lan_address) + "' completed ***").c("purple"))
+
+//     return _callback.catch("", 1)
+// end function
+
+Exploit.module.actions.attack = function(lan_address, change_password = false, third_arg)
+    metalib = Exploit.module.components.get_net_session.dump_lib
+    metaxploit = Exploit.module.components.get_metaxploit
+    scanned_info = metaxploit.scan(metalib)
+    print scanned_info
 end function
 
 Exploit.module.grab_ports = function(ip_address, must_match = [], all = 0)

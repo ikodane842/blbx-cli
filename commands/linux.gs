@@ -104,10 +104,10 @@ _COMMAND_.sweep = function(PARAMS)
     config = {"amount": 1, "ports": [], "rhost": 0}
     init = function()
         // sweep <target amount> OPTION: -port[<port_number>, ...]
-        if not PARAMS.len then 
+        if not PARAMS.len then
             Usage.display("sweep", Usage.get_usage_object("sweep"))
             return _callback.catch("", 0)
-        end if 
+        end if
 
         target_amount = Params.extract_type(PARAMS, [TokenTypes.Float])
         if not target_amount then target_amount = "1" else target_amount = target_amount[0].value
@@ -154,7 +154,7 @@ _COMMAND_.sweep = function(PARAMS)
 
         //_callback.local_debug(config.rhost, "config.rhost", 10)
     
-        Session.process.internal_run("nmap", config.rhost, 0)
+        _PROGRAM_.process.internal_run("nmap", config.rhost, 0)
         count = count + 1
     end while 
 
@@ -163,3 +163,36 @@ _COMMAND_.sweep = function(PARAMS)
     return _callback.catch(matching_ip_address_arr, 1)
 end function
 _COMMAND_.sw = @_COMMAND_.sweep
+
+_COMMAND_.nmap = function(PARAMS)
+    cmd_requirements = function()
+        if not PARAMS.len then return false 
+        if not is_valid_ip(PARAMS[0].value) then return 2
+        
+        return true 
+    end function
+    if not cmd_requirements then return _callback.catch("", 0)
+    if cmd_requirements == 2 then return _callback.catch("invalid ip address...", 0)
+
+    router = get_router(PARAMS[0].value)
+    if not router then return _callback.catch("remote target " + PARAMS[0].value + " is not reachable...", 0)
+
+    print ("Scanning remote target " + PARAMS[0].value + " for available ports...").c.b
+    if not router then return _callback.catch("interrupted, no available ports...", 0)
+
+    info = ["PORT STATE SERVICE LAN".c_all_black]
+    for port in router.used_ports 
+        service_info = router.port_info(port)
+        lan_address = port.get_lan_ip 
+        if port.is_closed then state = "closed".c_all_purple else state = "open".c_all_black
+        info.push(str(port.port_number).c_all_purple + " " + state + " " + service_info.c_all_purple + " " + lan_address.c_all_purple)
+    end for
+
+    print 
+    print info.fmt_cols
+    print 
+
+    return _callback.catch("", 1)
+end function
+
+// linux

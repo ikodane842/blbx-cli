@@ -16,6 +16,13 @@ _PROGRAM_.process.safe_run = function(cmd_name, parameters, data = 0)
     return command_proxy(parameters)
 end function
 
+_PROGRAM_.process.internal_run = function(cmd_name, parameters_str = 0, data = 0)
+    print "running: " + cmd_name + "\n" + parameters_str
+    Interpreter.set_input((cmd_name + " " + parameters_str).split(":").clean(""))
+    command_result = Interpreter.Execute()
+    Interpreter.wipe(1, 1)
+end function 
+
 import_code("/root/purple/prompt");
 import_code("/root/purple/utility");
 
@@ -52,6 +59,7 @@ import_code("/root/purple/callback");
 import_code("/root/purple/prototypes");
 import_code("/root/purple/markup");
 import_code("/root/purple/linux");
+import_code("/root/purple/exploits");
 import_code("/root/purple/syntax");
 
 // main runtime-loop
